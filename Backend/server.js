@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import userRoute from "./routes/userRoutes.js";
+import productRoute from "./routes/productRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(cors());
 
 
 app.use('/api/user' , userRoute)
+app.use('/api/product' , productRoute)
 
 
 
