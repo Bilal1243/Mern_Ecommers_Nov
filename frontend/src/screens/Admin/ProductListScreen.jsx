@@ -3,17 +3,28 @@ import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
 import { useNavigate } from "react-router-dom";
+import {
+  useGetProductsQuery,
+  useDeleteProductMutation,
+} from "../../slices/productApiSlice";
+import { toast } from "react-toastify";
 
 const ProductListScreen = () => {
-  let products = [];
+  const { data: products, isLoading, error, refetch } = useGetProductsQuery();
 
-  let isLoading = false;
+  const [deleteProduct] = useDeleteProductMutation();
 
-  const deleteHandler = async () => {};
+  const deleteHandler = async (productId) => {
+    try {
+      await deleteProduct(productId).unwrap();
+      toast.success("Deleted");
+      refetch();
+    } catch (error) {
+      toast.error(error?.data?.message || error?.message);
+    }
+  };
 
-  let error
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <>
@@ -22,7 +33,10 @@ const ProductListScreen = () => {
           <h1>Products</h1>
         </Col>
         <Col className="text-end">
-          <Button className="btn-sm m-3" onClick={()=>navigate('/admin/addProduct')}>
+          <Button
+            className="btn-sm m-3"
+            onClick={() => navigate("/admin/addProduct")}
+          >
             <FaPlus /> Create Product
           </Button>
         </Col>
@@ -45,7 +59,7 @@ const ProductListScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {products?.products?.map((product) => (
                 <tr key={product._id}>
                   <td>{product._id}</td>
                   <td>{product.name}</td>
